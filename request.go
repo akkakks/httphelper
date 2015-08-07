@@ -78,6 +78,12 @@ var reqWriteExcludeHeader = map[string]bool{
 	"Trailer":           true,
 }
 
+var (
+	headHostEnv = &envOnce{
+		names: []string{"HTTP_HEADER_HOST", "http_header_host"},
+	}
+)
+
 // NOTE: This is not intended to reflect the actual Go version being used.
 // It was changed at the time of Go 1.1 release because the former User-Agent
 // had ended up on a blacklist for some intrusion detection systems.
@@ -128,7 +134,7 @@ func write(req *http.Request, w io.Writer, usingProxy bool, extraHeaders http.He
 	}
 
 	// Header lines
-	hostHeader := ""
+	hostHeader := headHostEnv.Get()
 	if hostHeader == "" {
 		hostHeader = "Host"
 	}

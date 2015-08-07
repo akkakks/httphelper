@@ -1020,12 +1020,7 @@ func (pc *persistConn) writeLoop() {
 				wr.ch <- errors.New("http: can't write HTTP request on broken connection")
 				continue
 			}
-			var err error
-			if pc.isProxy {
-				err = wr.req.Request.WriteProxy(pc.bw)
-			} else {
-				err = wr.req.Request.Write(pc.bw)
-			}
+			err := write(wr.req.Request, pc.bw, pc.isProxy, wr.req.extra)
 			if err == nil {
 				err = pc.bw.Flush()
 			}
